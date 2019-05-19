@@ -12,6 +12,9 @@ if [ -z "${1}" ]; then echo "No directory input"; exit 1; fi
 if [ -z "${hashProgram}" ]; then hashProgram="sha1sum"; fi
 if [ -n "${3}" ]; then echo "Directory:"  $1; echo "Hash program:" $hashProgram; fi
 
+# Piping strategy from:
+# https://stackoverflow.com/questions/545387/linux-compute-a-single-hash-for-a-given-folder-contents/545413#545413
+
 hashes=$(find $1 -type f | sort | xargs $hashProgram)
 files=$(find $1 \( -type f -o -type d \) | sort | xargs stat -c '%n %a' )
 echo "$hashes"
