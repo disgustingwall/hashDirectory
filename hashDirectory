@@ -2,21 +2,29 @@
 
 # $1 = Directory to operate on
 # $2 = Hashing executable
-# $3 = Verbosity
-##Empty = Critical output only
-##Nonempty = Flavor text
+# $3 = Use relative path
+## 1 = Yes
+# $4 = Verbosity
+## 1 = Parameter echo
 
+# Set variables from parameters
+directory=$1
 hashProgram=$2
 
-if [ -z "${1}" ]; then echo "No directory input"; exit 1; fi
-if [ -z "${hashProgram}" ]; then hashProgram=sha512sum; fi
-if [ -n "${3}" ]; then echo "Directory:"  $1; echo "Hash program:" $hashProgram; fi
+# Ensure a hash program exists
+if test -z "${hashProgram}"; then hashProgram=sha512sum; fi
+
+# Print parameters if verbose
+if test "${4}" = "1"; then echo "Directory:" $directory; echo "Hash program:" $hashProgram; fi
+
+# If only relative data is needed, navigate to the directory to change behavior of find
+if test "${3}" = "1"; then cd $directory; directory=.; fi
 
 # Piping strategy from:
 # https://stackoverflow.com/questions/545387/linux-compute-a-single-hash-for-a-given-folder-contents/545413#545413
+hashes=$(find $directory -type f -print0 | sort -z | xargs -0 $hashProgram)
+files=$(find $directory \( -type f -o -type d \) -print0 | sort -z | xargs -0 stat -c '%n %a' )
 
-hashes=$(find $1 -type f -print0 | sort -z | xargs -0 $hashProgram)
-files=$(find $1 \( -type f -o -type d \) -print0 | sort -z | xargs -0 stat -c '%n %a' )
 echo "$hashes"
 echo "$files"
 echo -e "$hashes"\n"$files" | $hashProgram
