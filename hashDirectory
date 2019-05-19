@@ -11,6 +11,9 @@
 directory=$1
 hashProgram=$2
 
+# Ensure target directory exists
+if test ! -d $directory; then echo "Target directory doesn't exist"; exit 1; fi
+
 # Ensure a hash program exists
 if test -z "${hashProgram}"; then hashProgram=sha512sum; fi
 
