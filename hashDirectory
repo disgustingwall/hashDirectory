@@ -15,8 +15,8 @@ if [ -n "${3}" ]; then echo "Directory:"  $1; echo "Hash program:" $hashProgram;
 # Piping strategy from:
 # https://stackoverflow.com/questions/545387/linux-compute-a-single-hash-for-a-given-folder-contents/545413#545413
 
-hashes=$(find $1 -type f | sort | xargs $hashProgram)
-files=$(find $1 \( -type f -o -type d \) | sort | xargs stat -c '%n %a' )
+hashes=$(find $1 -type f -print0 | sort -z | xargs -0 $hashProgram)
+files=$(find $1 \( -type f -o -type d \) -print0 | sort -z | xargs -0 stat -c '%n %a' )
 echo "$hashes"
 echo "$files"
 echo -e "$hashes"\n"$files" | $hashProgram
