@@ -9,7 +9,7 @@
 hashProgram=$2
 
 if [ -z "${1}" ]; then echo "No directory input"; exit 1; fi
-if [ -z "${hashProgram}" ]; then hashProgram="sha1sum"; fi
+if [ -z "${hashProgram}" ]; then hashProgram=sha512sum; fi
 if [ -n "${3}" ]; then echo "Directory:"  $1; echo "Hash program:" $hashProgram; fi
 
 # Piping strategy from:
